@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="המתכונים שלנו">
+<meta name="theme-color" content="#f6f1ea">
+<title>המתכונים שלנו</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1ea; --surface:#fffdf9; --surface-2:#efe7dc; --text:#2b2420; --muted:#7a6e64; --border:#e3d8ca;
+  --accent:#c4532d; --accent-ink:#ffffff; --accent-soft:#f6dfd4; --danger:#b3261e;
+  --radius:16px; --shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#1b1715; --surface:#25201d; --surface-2:#302a26; --text:#f3ece5; --muted:#a89a8e; --border:#3b342f;
+         --accent:#e0714a; --accent-soft:#4a2c21; --danger:#ff8a80; --shadow:none; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Rubik,system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit;color:inherit}
+input,textarea,select{font-size:16px}
+.wrap{max-width:720px;margin:0 auto;padding:16px;padding-top:calc(14px + env(safe-area-inset-top))}
+h1{font-size:26px;margin:4px 0 14px;font-weight:700}
+h2{font-size:18px;margin:22px 0 10px;font-weight:600}
+.tabbar{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.tabbar button{flex:1;background:none;border:0;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font-size:12px;cursor:pointer}
+.tabbar .ic{font-size:22px;line-height:1.2}
+.tabbar button.on{color:var(--accent);font-weight:600}
+.btn{border:0;border-radius:12px;padding:12px 16px;background:var(--surface-2);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--danger)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:8px 12px;font-size:14px;border-radius:10px}
+.input{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+textarea.input{resize:vertical;min-height:46px;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.static{cursor:default}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.rcard{overflow:hidden;cursor:pointer;text-align:right;padding:0;display:flex;flex-direction:column}
+.rcard .img{aspect-ratio:4/3;background:var(--surface-2) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:44px}
+.rcard .body{padding:10px 12px 12px}
+.rcard .t{font-weight:600;font-size:15px;line-height:1.3}
+.rcard .m{color:var(--muted);font-size:12px;margin-top:4px;line-height:1.4}
+.filters{margin:10px 0 16px;display:flex;flex-direction:column;gap:10px}
+.label{font-size:13px;color:var(--muted);margin:16px 0 6px;font-weight:500}
+.row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.grow{flex:1;min-width:0}
+.x{background:none;border:0;color:var(--muted);font-size:20px;padding:10px 6px;cursor:pointer;line-height:1}
+.mic{width:104px;height:104px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:42px;display:block;margin:12px auto 6px;box-shadow:0 6px 20px rgba(196,83,45,.35);cursor:pointer}
+.mic.live{animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(196,83,45,.55)}70%{box-shadow:0 0 0 20px rgba(196,83,45,0)}100%{box-shadow:0 0 0 0 rgba(196,83,45,0)}}
+.miclabel{text-align:center;font-size:14px;color:var(--muted)}
+.interim{text-align:center;min-height:26px;margin:8px 0;font-style:italic}
+.hint{color:var(--muted);font-size:14px;line-height:1.55}
+.hero{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:var(--radius);display:block;margin-bottom:14px}
+.ing{list-style:none;padding:0;margin:0}
+.ing li{padding:11px 4px;border-bottom:1px solid var(--border);display:flex;gap:10px;cursor:pointer;line-height:1.4}
+.ing li.done{opacity:.4;text-decoration:line-through}
+.ing .amt{color:var(--accent);font-weight:600;min-width:70px}
+.steps{padding:0;margin:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;padding:10px 0;line-height:1.6}
+.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.notes{background:var(--surface-2);border-radius:12px;padding:12px 14px;line-height:1.6;white-space:pre-wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.back{background:none;border:0;color:var(--accent);font-size:16px;padding:6px 0;cursor:pointer}
+.toast{position:fixed;bottom:calc(92px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 16px;border-radius:12px;z-index:40;font-size:14px;max-width:90vw;text-align:center;line-height:1.4}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:30;color:#fff;font-size:17px;flex-direction:column;gap:14px}
+.spin{width:38px;height:38px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;color:var(--muted);padding:40px 16px;line-height:1.6}
+.files{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.fileitem{position:relative}
+.thumb{width:86px;height:86px;border-radius:10px;object-fit:cover;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--surface-2);font-size:12px;text-align:center;padding:4px;overflow:hidden}
+.fileitem .x{position:absolute;top:-8px;left:-8px;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;padding:0;font-size:16px}
+.filebox{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border:2px dashed var(--border);border-radius:var(--radius);padding:28px 16px;text-align:center;color:var(--muted);cursor:pointer;background:var(--surface)}
+.filebox .big{font-size:36px}
+.imgedit{display:flex;gap:12px;align-items:center}
+.imgedit img{width:96px;height:96px;object-fit:cover;border-radius:12px}
+.boot{padding:40px;text-align:center;color:#888;font-family:system-ui}
+.sticky{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));padding-top:10px;background:linear-gradient(transparent,var(--bg) 30%)}
+.member{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.member:last-child{border-bottom:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="root"><div class="boot">טוען…</div></div>
+
+<script type="module">
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'https://esm.sh/react@18.3.1';
+import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1';
+import htm from 'https://esm.sh/htm@3.1.1';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const html = htm.bind(React.createElement);
+
+// ===== הגדרות =====
+const SUPABASE_URL = 'https://taihfgfrslmkjlzprczz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JaZOC6UxzaIGgjUu1Lt1zQ_zjGFNFyz';
+const BUCKET = 'recipe-images';
+const DISH_TYPES = ['בשרי', 'דג', 'צמחוני', 'מאפה', 'אחר'];
+const DISH_EMOJI = { 'בשרי': '🍖', 'דג': '🐟', 'צמחוני': '🥗', 'מאפה': '🥐', 'אחר': '🍽️' };
+const GROUP_TAGS = ['הורים', 'ילדים'];
+
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+// ===== עזרים =====
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+
+function normalize(r = {}) {
+  return {
+    id: r.id,
+    title: r.title || '',
+    dish_type: DISH_TYPES.includes(r.dish_type) ? r.dish_type : 'אחר',
+    servings: r.servings || '',
+    ingredients: (r.ingredients || []).map(i => typeof i === 'string' ? { item: i, amount: '' } : { item: i.item || '', amount: i.amount || '' }),
+    steps: (r.steps || []).map(s => typeof s === 'string' ? s : (s.text || '')),
+    notes: r.notes || '',
+    liked_by: r.liked_by || [],
+    image_url: r.image_url || null,
+    raw_input: r.raw_input || null,
+    created_at: r.created_at,
+  };
+}
+
+function loadImage(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); res(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('לא הצלחתי לקרוא את התמונה')); };
+    img.src = url;
+  });
+}
+
+async function compressImage(file, max = 1600, q = 0.82) {
+  const img = await loadImage(file);
+  const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * s);
+  c.height = Math.round(img.naturalHeight * s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('כיווץ התמונה נכשל')), 'image/jpeg', q));
+}
+
+function blobToBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(',')[1]);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+async function aiEdit({ text, files }) {
+  let r;
+  try {
+    r = await fetch(`${SUPABASE_URL}/functions/v1/edit-recipe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY },
+      body: JSON.stringify({ text, files }),
+    });
+  } catch { throw new Error('אין חיבור לשרת. בדוק את האינטרנט ונסה שוב.'); }
+  let data = {};
+  try { data = await r.json(); } catch {}
+  if (r.status === 401) throw new Error('Supabase חסם את הבקשה: צריך לכבות את Verify JWT בפונקציה edit-recipe.');
+  if (!r.ok || data.error) throw new Error('העריכה נכשלה: ' + (data.error || data.message || data.msg || r.status));
+  return normalize(data.recipe);
+}
+
+const pathFromUrl = u => {
+  const p = u && u.split(`/${BUCKET}/`)[1];
+  return p ? decodeURIComponent(p.split('?')[0]) : null;
+};
+
+async function removeImage(url) {
+  const p = pathFromUrl(url);
+  if (p) await sb.storage.from(BUCKET).remove([p]);
+}
+
+async function uploadImage(id, file) {
+  const blob = await compressImage(file, 1400, 0.8);
+  const path = `${id}/${Date.now()}.jpg`;
+  const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+  if (error) throw new Error('העלאת התמונה נכשלה: ' + error.message);
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+async function saveRecipe(rec, imageFile, oldImageUrl) {
+  const row = {
+    title: rec.title.trim() || 'מתכון ללא שם',
+    dish_type: rec.dish_type,
+    liked_by: rec.liked_by,
+    ingredients: rec.ingredients.filter(i => i.item.trim()),
+    steps: rec.steps.filter(s => s.trim()),
+    notes: rec.notes.trim() || null,
+    servings: rec.servings.trim() || null,
+    image_url: rec.image_url || null,
+  };
+  if (!rec.id) row.raw_input = rec.raw_input || null;
+  const write = r => rec.id
+    ? sb.from('recipes').update(r).eq('id', rec.id).select().single()
+    : sb.from('recipes').insert(r).select().single();
+  let { data, error } = await write(row);
+  if (error && /servings/.test(error.message || '')) { delete row.servings; ({ data, error } = await write(row)); }
+  if (error) throw new Error('השמירה נכשלה: ' + error.message);
+  if (imageFile) {
+    const url = await uploadImage(data.id, imageFile);
+    const res = await sb.from('recipes').update({ image_url: url }).eq('id', data.id).select().single();
+    if (res.error) throw new Error('שמירת התמונה נכשלה: ' + res.error.message);
+    data = res.data;
+  }
+  if (oldImageUrl && oldImageUrl !== data.image_url) { try { await removeImage(oldImageUrl); } catch {} }
+  return normalize(data);
+}
+
+function recipeText(r) {
+  const out = [`🍽️ ${r.title}`];
+  if (r.servings) out.push(`כמות: ${r.servings}`);
+  if (r.ingredients.length) { out.push('', 'מצרכים:'); r.ingredients.forEach(i => out.push(`• ${i.amount ? i.amount + ' ' : ''}${i.item}`)); }
+  if (r.steps.length) { out.push('', 'אופן ההכנה:'); r.steps.forEach((s, n) => out.push(`${n + 1}. ${s}`)); }
+  if (r.notes) out.push('', `הערות: ${r.notes}`);
+  return out.join('\n');
+}
+
+function useWakeLock(on) {
+  useEffect(() => {
+    if (!on || !('wakeLock' in navigator)) return;
+    let lock = null, dead = false;
+    const req = async () => { try { lock = await navigator.wakeLock.request('screen'); } catch {} };
+    const onVis = () => { if (document.visibilityState === 'visible' && !dead) req(); };
+    req();
+    document.addEventListener('visibilitychange', onVis);
+    return () => { dead = true; document.removeEventListener('visibilitychange', onVis); try { lock && lock.release(); } catch {} };
+  }, [on]);
+}
+
+// ===== רכיבים =====
+function Chips({ options, selected, onToggle }) {
+  return html`<div className="chips">
+    ${options.map(o => html`<button key=${o} type="button" className=${'chip' + (selected.includes(o) ? ' on' : '')} onClick=${() => onToggle(o)}>${o}</button>`)}
+  </div>`;
+}
+
+function ListView({ recipes, loading, members, onOpen }) {
+  const [q, setQ] = useState('');
+  const [types, setTypes] = useState([]);
+  const [people, setPeople] = useState([]);
+  const peopleOpts = [...GROUP_TAGS, ...members.map(m => m.name)];
+  const toggle = (arr, set) => v => set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
+
+  const shown = useMemo(() => recipes.filter(r => {
+    if (types.length && !types.includes(r.dish_type)) return false;
+    if (people.length && !people.some(p => r.liked_by.includes(p))) return false;
+    if (q.trim()) {
+      const hay = (r.title + ' ' + r.ingredients.map(i => i.item).join(' ')).toLowerCase();
+      if (!hay.includes(q.trim().toLowerCase())) return false;
+    }
+    return true;
+  }), [recipes, q, types, people]);
+
+  return html`<div className="wrap">
+    <h1>המתכונים שלנו</h1>
+    <input className="input" type="search" placeholder="חיפוש לפי שם או מצרך…" value=${q} onInput=${e => setQ(e.target.value)} />
+    <div className="filters">
+      <${Chips} options=${DISH_TYPES} selected=${types} onToggle=${toggle(types, setTypes)} />
+      <${Chips} options=${peopleOpts.map(p => p)} selected=${people} onToggle=${toggle(people, setPeople)} />
+    </div>
+    ${loading ? html`<div className="empty">טוען מתכונים…</div>`
+      : shown.length === 0 ? html`<div className="empty">${recipes.length ? 'אין מתכונים שמתאימים לסינון.' : 'עוד אין מתכונים. אפשר להקליט מתכון בלשונית "הקלטה" או להעלות צילום בלשונית "העלאה".'}</div>`
+      : html`<div className="grid">
+        ${shown.map(r => html`<button key=${r.id} className="card rcard" onClick=${() => onOpen(r.id)}>
+          <div className="img" style=${r.image_url ? { backgroundImage: `url("${r.image_url}")` } : null}>${r.image_url ? '' : DISH_EMOJI[r.dish_type]}</div>
+          <div className="body">
+            <div className="t">${r.title}</div>
+            <div className="m">${r.dish_type}${r.liked_by.length ? ' · ❤️ ' + r.liked_by.join(', ') : ''}</div>
+          </div>
+        </button>`)}
+      </div>`}
+  </div>`;
+}
+
+function RecipeView({ recipe, loading, onBack, onEdit, onDelete, toast }) {
+  const [done, setDone] = useState([]);
+  const fileRef = useRef(null);
+
+  useEffect(() => {
+    fileRef.current = null;
+    if (!recipe?.image_url) return;
+    let alive = true;
+    fetch(recipe.image_url).then(r => r.blob()).then(b => {
+      if (alive) fileRef.current = new File([b], 'recipe.jpg', { type: b.type || 'image/jpeg' });
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [recipe?.image_url]);
+
+  if (!recipe) return html`<div className="wrap">
+    <button className="back" onClick=${onBack}>→ חזרה</button>
+    <div className="empty">${loading ? 'טוען…' : 'המתכון לא נמצא.'}</div>
+  </div>`;
+
+  const share = async () => {
+    const link = `${location.origin}${location.pathname}#r=${recipe.id}`;
+    const text = recipeText(recipe) + `\n\n${link}`;
+    try {
+      const f = fileRef.current;
+      if (f && navigator.canShare && navigator.canShare({ files: [f] })) {
+        await navigator.share({ files: [f], title: recipe.title, text });
+      } else if (navigator.share) {
+        await navigator.share({ title: recipe.title, text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        toast('המתכון הועתק');
+      }
+    } catch (e) { if (e.name !== 'AbortError') toast('השיתוף נכשל'); }
+  };
+
+  const toggleDone = i => setDone(d => d.includes(i) ? d.filter(x => x !== i) : [...d, i]);
+
+  return html`<div className="wrap">
+    <div className="top">
+      <button className="back" onClick=${onBack}>→ כל המתכונים</button>
+      <button className="btn sm primary" onClick=${share}>שתף ↗</button>
+    </div>
+    ${recipe.image_url && html`<img className="hero" src=${recipe.image_url} alt="" />`}
+    <h1>${recipe.title}</h1>
+    <div className="chips">
+      <span className="chip static">${DISH_EMOJI[recipe.dish_type]} ${recipe.dish_type}</span>
+      ${recipe.servings && html`<span className="chip static">${recipe.servings}</span>`}
+      ${recipe.liked_by.map(p => html`<span key=${p} className="chip static">❤️ ${p}</span>`)}
+    </div>
+
+    ${recipe.ingredients.length > 0 && html`<h2>מצרכים</h2>
+      <ul className="ing">
+        ${recipe.ingredients.map((i, n) => html`<li key=${n} className=${done.includes(n) ? 'done' : ''} onClick=${() => toggleDone(n)}>
+          <span className="amt">${i.amount}</span><span>${i.item}</span>
+        </li>`)}
+      </ul>
+      <div className="hint" style=${{ marginTop: 6 }}>טיפ: לחיצה על מצרך מסמנת אותו.</div>`}
+
+    ${recipe.steps.length > 0 && html`<h2>אופן ההכנה</h2>
+      <ol className="steps">${recipe.steps.map((s, n) => html`<li key=${n}><span>${s}</span></li>`)}</ol>`}
+
+    ${recipe.notes && html`<h2>הערות</h2><div className="notes">${recipe.notes}</div>`}
+
+    <div className="actions">
+      <button className="btn" onClick=${onEdit}>✏️ עריכה</button>
+      <button className="btn danger" onClick=${onDelete}>🗑️ מחיקה</button>
+    </div>
+  </div>`;
+}
+
+function RecipeForm({ initial, members, heading, onSave, onCancel, toast }) {
+  const [r, setR] = useState(() => normalize(initial));
+  const [imgFile, setImgFile] = useState(null);
+  const [imgPrev, setImgPrev] = useState(initial.image_url || null);
+  const [saving, setSaving] = useState(false);
+  const imgInput = useRef(null);
+
+  const set = (k, v) => setR(x => ({ ...x, [k]: v }));
+  const tagOpts = [...new Set([...GROUP_TAGS, ...members.map(m => m.name), ...r.liked_by])];
+  const toggleLike = t => set('liked_by', r.liked_by.includes(t) ? r.liked_by.filter(x => x !== t) : [...r.liked_by, t]);
+  const setIng = (n, k, v) => set('ingredients', r.ingredients.map((i, j) => j === n ? { ...i, [k]: v } : i));
+  const setStep = (n, v) => set('steps', r.steps.map((s, j) => j === n ? v : s));
+
+  const pickImg = e => {
+    const f = e.target.files?.[0];
+    e.target.value = '';
+    if (!f) return;
+    setImgFile(f);
+    setImgPrev(URL.createObjectURL(f));
+  };
+  const clearImg = () => { setImgFile(null); setImgPrev(null); set('image_url', null); };
+
+  const save = async () => {
+    setSaving(true);
+    try { await onSave({ ...r, image_url: imgFile ? r.image_url : (imgPrev ? r.image_url : null) }, imgFile, initial.image_url || null); }
+    catch (e) { toast(e.message); setSaving(false); }
+  };
+
+  return html`<div className="wrap">
+    <div className="top">
+      <button className="back" onClick=${onCancel}>→ ביטול</button>
+    </div>
+    <h1>${heading}</h1>
+
+    <div className="label">שם המתכון</div>
+    <input className="input" value=${r.title} onInput=${e => set('title', e.target.value)} placeholder="למשל: עוגת שוקולד של סבתא" />
+
+    <div className="label">סוג המנה</div>
+    <${Chips} options=${DISH_TYPES} selected=${[r.dish_type]} onToggle=${t => set('dish_type', t)} />
+
+    <div className="label">מי אהב?</div>
+    <${Chips} options=${tagOpts} selected=${r.liked_by} onToggle=${toggleLike} />
+
+    <div className="label">כמות / מנות</div>
+    <input className="input" value=${r.servings} onInput=${e => set('servings', e.target.value)} placeholder="למשל: 6 מנות, תבנית 26" />
+
+    <h2>מצרכים</h2>
+    ${r.ingredients.map((i, n) => html`<div className="row" key=${n}>
+      <input className="input" style=${{ width: '34%' }} value=${i.amount} placeholder="כמות" onInput=${e => setIng(n, 'amount', e.target.value)} />
+      <input className="input grow" value=${i.item} placeholder="מצרך" onInput=${e => setIng(n, 'item', e.target.value)} />
+      <button className="x" aria-label="מחק" onClick=${() => set('ingredients', r.ingredients.filter((_, j) => j !== n))}>✕</button>
+    </div>`)}
+    <button className="btn sm" onClick=${() => set('ingredients', [...r.ingredients, { item: '', amount: '' }])}>+ מצרך</button>
+
+    <h2>אופן ההכנה</h2>
+    ${r.steps.map((s, n) => html`<div className="row" key=${n}>
+      <span style=${{ padding: '12px 2px', color: 'var(--accent)', fontWeight: 700 }}>${n + 1}.</span>
+      <textarea className="input grow" rows="2" value=${s} onInput=${e => setStep(n, e.target.value)}></textarea>
+      <button className="x" aria-label="מחק" onClick=${() => set('steps', r.steps.filter((_, j) => j !== n))}>✕</button>
+    </div>`)}
+    <button className="btn sm" onClick=${() => set('steps', [...r.steps, ''])}>+ שלב</button>
+
+    <h2>הערות</h2>
+    <textarea className="input" rows="3" value=${r.notes} onInput=${e => set('notes', e.target.value)} placeholder="טיפים, תחליפים, זמני אפייה…"></textarea>
+
+    <h2>תמונה</h2>
+    <input ref=${imgInput} type="file" accept="image/*" hidden onChange=${pickImg} />
+    ${imgPrev
+      ? html`<div className="imgedit">
+          <img src=${imgPrev} alt="" />
+          <div style=${{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <button className="btn sm" onClick=${() => imgInput.current.click()}>החלף תמונה</button>
+            <button className="btn sm danger" onClick=${clearImg}>הסר</button>
+          </div>
+        </div>`
+      : html`<button className="btn" onClick=${() => imgInput.current.click()}>📷 הוסף תמונה</button>`}
+
+    <div className="sticky">
+      <button className="btn primary block" disabled=${saving} onClick=${save}>${saving ? 'שומר…' : 'שמור מתכון'}</button>
+    </div>
+  </div>`;
+}
+
+function VoiceView({ onProcessed, setBusy, toast }) {
+  const [lines, setLines] = useState(() => store.get('draft-lines', []));
+  const [typed, setTyped] = useState('');
+  const [interim, setInterim] = useState('');
+  const [live, setLive] = useState(false);
+  const [err, setErr] = useState('');
+  const recRef = useRef(null);
+  useWakeLock(true);
+
+  useEffect(() => { store.set('draft-lines', lines); }, [lines]);
+  useEffect(() => () => { try { recRef.current?.abort(); } catch {} }, []);
+
+  const add = t => { t = (t || '').trim(); if (t) setLines(ls => [...ls, t]); };
+
+  const toggleMic = () => {
+    if (live) { try { recRef.current?.stop(); } catch {} return; }
+    if (!SR) { setErr('הדפדפן לא תומך בזיהוי דיבור. אפשר להשתמש בשדה הטקסט ובמיקרופון של המקלדת.'); return; }
+    setErr('');
+    const rec = new SR();
+    rec.lang = 'he-IL';
+    rec.interimResults = true;
+    rec.continuous = false;
+    let latest = '';
+    rec.onresult = e => {
+      latest = Array.from(e.results).map(r => r[0].transcript).join(' ');
+      setInterim(latest);
+    };
+    rec.onerror = e => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') setErr('צריך לאשר גישה למיקרופון (בהגדרות האייפון → Safari → מיקרופון).');
+      else if (e.error !== 'no-speech' && e.error !== 'aborted') setErr('זיהוי הדיבור נעצר. אפשר לנסות שוב או להקליד.');
+    };
+    rec.onend = () => { setLive(false); setInterim(''); add(latest); recRef.current = null; };
+    recRef.current = rec;
+    try { rec.start(); setLive(true); } catch { setErr('לא הצלחתי להפעיל את המיקרופון.'); }
+  };
+
+  const addTyped = () => { add(typed); setTyped(''); };
+  const setLine = (n, v) => setLines(ls => ls.map((l, j) => j === n ? v : l));
+
+  const finish = async () => {
+    const text = lines.filter(l => l.trim()).join('\n');
+    setBusy('עורך את המתכון…');
+    try {
+      const r = await aiEdit({ text });
+      r.raw_input = text;
+      onProcessed(r, 'voice');
+    } catch (e) { toast(e.message); }
+    finally { setBusy(null); }
+  };
+
+  const clear = () => { if (confirm('למחוק את כל הטיוטה?')) setLines([]); };
+
+  return html`<div className="wrap">
+    <h1>מתכון חדש בהקלטה</h1>
+    <p className="hint">לחץ על המיקרופון ואמור מצרך או שלב. כל משפט נשמר כשורה שאפשר לערוך. בסיום, לחץ "סיים וערוך מתכון". המסך יישאר דלוק בזמן ההקלטה.</p>
+
+    <button className=${'mic' + (live ? ' live' : '')} onClick=${toggleMic} aria-label="הקלטה">${live ? '■' : '🎤'}</button>
+    <div className="miclabel">${live ? 'מקשיב… לחץ לעצירה' : 'לחץ ודבר'}</div>
+    <div className="interim">${interim}</div>
+    ${err && html`<div className="hint" style=${{ color: 'var(--danger)', textAlign: 'center' }}>${err}</div>`}
+
+    <div className="row" style=${{ marginTop: 12 }}>
+      <textarea className="input grow" rows="1" value=${typed} placeholder="או הקלד / הכתב עם המקלדת…"
+        onInput=${e => setTyped(e.target.value)}
+        onKeyDown=${e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addTyped(); } }}></textarea>
+      <button className="btn" onClick=${addTyped} disabled=${!typed.trim()}>הוסף</button>
+    </div>
+
+    ${lines.length > 0 && html`<h2>מה נאמר עד עכשיו (${lines.length})</h2>`}
+    ${lines.map((l, n) => html`<div className="row" key=${n}>
+      <textarea className="input grow" rows="2" value=${l} onInput=${e => setLine(n, e.target.value)}></textarea>
+      <button className="x" aria-label="מחק" onClick=${() => setLines(ls => ls.filter((_, j) => j !== n))}>✕</button>
+    </div>`)}
+
+    ${lines.length > 0 && html`<div className="sticky">
+      <button className="btn primary block" onClick=${finish}>✨ סיים וערוך מתכון</button>
+      <button className="btn block" style=${{ marginTop: 8, background: 'transparent' }} onClick=${clear}>נקה טיוטה</button>
+    </div>`}
+  </div>`;
+}
+
+function UploadView({ onProcessed, setBusy, toast }) {
+  const [files, setFiles] = useState([]);
+  const [note, setNote] = useState('');
+  const input = useRef(null);
+
+  const pick = e => {
+    const fs = Array.from(e.target.files || []);
+    e.target.value = '';
+    setFiles(prev => [...prev, ...fs.map(f => ({ file: f, preview: f.type.startsWith('image/') ? URL.createObjectURL(f) : null }))]);
+  };
+
+  const go = async () => {
+    setBusy('קורא את המתכון…');
+    try {
+      const payload = [];
+      let extra = '';
+      for (const { file } of files) {
+        if (file.type.startsWith('image/')) {
+          const b = await compressImage(file, 2000, 0.85);
+          payload.push({ mimeType: 'image/jpeg', data: await blobToBase64(b) });
+        } else if (file.type === 'application/pdf') {
+          if (file.size > 15e6) throw new Error(`הקובץ ${file.name} גדול מדי (עד 15MB).`);
+          payload.push({ mimeType: 'application/pdf', data: await blobToBase64(file) });
+        } else if (file.type.startsWith('text/')) {
+          extra += '\n' + await file.text();
+        } else {
+          throw new Error(`הקובץ ${file.name} לא נתמך. אפשר להעלות תמונה, PDF או קובץ טקסט.`);
+        }
+      }
+      const text = (note + extra).trim() || undefined;
+      const r = await aiEdit({ text, files: payload });
+      if (text) r.raw_input = text;
+      onProcessed(r, 'upload');
+    } catch (e) { toast(e.message); }
+    finally { setBusy(null); }
+  };
+
+  return html`<div className="wrap">
+    <h1>מתכון מצילום או מסמך</h1>
+    <p className="hint">העלה צילום מסך, צילום של דף מתכון או קובץ PDF. אם המתכון מתפרש על כמה עמודים, אפשר להעלות כמה קבצים יחד.</p>
+
+    <input ref=${input} type="file" accept="image/*,application/pdf,text/plain" multiple hidden onChange=${pick} />
+    <div className="filebox" onClick=${() => input.current.click()}>
+      <div className="big">📄</div>
+      <div>לחץ לבחירת תמונה או קובץ</div>
+    </div>
+
+    ${files.length > 0 && html`<div className="files">
+      ${files.map((f, n) => html`<div className="fileitem" key=${n}>
+        ${f.preview ? html`<img className="thumb" src=${f.preview} alt="" />` : html`<div className="thumb">${f.file.name}</div>`}
+        <button className="x" aria-label="הסר" onClick=${() => setFiles(fs => fs.filter((_, j) => j !== n))}>✕</button>
+      </div>`)}
+    </div>`}
+
+    <div className="label">הערות נוספות (לא חובה)</div>
+    <textarea className="input" rows="2" value=${note} onInput=${e => setNote(e.target.value)} placeholder="למשל: הכפלתי את הכמויות, השתמשתי בחמאה במקום שמן"></textarea>
+
+    <div className="sticky">
+      <button className="btn primary block" disabled=${!files.length && !note.trim()} onClick=${go}>✨ ערוך מתכון</button>
+    </div>
+  </div>`;
+}
+
+function FamilyView({ members, reload, toast }) {
+  const [name, setName] = useState('');
+  const add = async () => {
+    const n = name.trim();
+    if (!n) return;
+    if (GROUP_TAGS.includes(n) || members.some(m => m.name === n)) { toast('השם כבר קיים'); return; }
+    const { error } = await sb.from('family_members').insert({ name: n });
+    if (error) { toast('ההוספה נכשלה: ' + error.message); return; }
+    setName('');
+    reload();
+  };
+  const del = async m => {
+    if (!confirm(`להסיר את ${m.name} מהרשימה? (המתכונים לא יימחקו)`)) return;
+    const { error } = await sb.from('family_members').delete().eq('id', m.id);
+    if (error) toast('ההסרה נכשלה: ' + error.message); else reload();
+  };
+  return html`<div className="wrap">
+    <h1>המשפחה</h1>
+    <p className="hint">השמות כאן יופיעו כתגיות "מי אהב" בכל מתכון. התגיות "הורים" ו"ילדים" קיימות תמיד.</p>
+    <div className="row" style=${{ marginTop: 12 }}>
+      <input className="input grow" value=${name} placeholder="שם חדש" onInput=${e => setName(e.target.value)} onKeyDown=${e => e.key === 'Enter' && add()} />
+      <button className="btn primary" onClick=${add}>הוסף</button>
+    </div>
+    ${members.length > 0 && html`<div className="card" style=${{ marginTop: 12 }}>
+      ${members.map(m => html`<div className="member" key=${m.id}>
+        <span>${m.name}</span>
+        <button className="x" aria-label="הסר" onClick=${() => del(m)}>✕</button>
+      </div>`)}
+    </div>`}
+  </div>`;
+}
+
+const TABS = [
+  { id: 'list', ic: '📖', label: 'מתכונים' },
+  { id: 'voice', ic: '🎤', label: 'הקלטה' },
+  { id: 'upload', ic: '📷', label: 'העלאה' },
+  { id: 'family', ic: '👨‍👩‍👧‍👦', label: 'משפחה' },
+];
+
+function App() {
+  const [tab, setTab] = useState('list');
+  const [view, setView] = useState(null);
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [members, setMembers] = useState([]);
+  const [busy, setBusy] = useState(null);
+  const [toastMsg, setToastMsg] = useState(null);
+  const tRef = useRef(null);
+
+  const toast = useCallback(m => {
+    setToastMsg(m);
+    clearTimeout(tRef.current);
+    tRef.current = setTimeout(() => setToastMsg(null), 4000);
+  }, []);
+
+  const loadMembers = useCallback(async () => {
+    const { data, error } = await sb.from('family_members').select('*').order('id');
+    if (!error) setMembers(data);
+  }, []);
+
+  const loadRecipes = useCallback(async () => {
+    const { data, error } = await sb.from('recipes').select('*').order('created_at', { ascending: false });
+    if (error) toast('שגיאה בטעינת המתכונים: ' + error.message);
+    else setRecipes(data.map(normalize));
+    setLoading(false);
+  }, [toast]);
+
+  useEffect(() => {
+    loadRecipes();
+    loadMembers();
+    const fromHash = () => {
+      const m = location.hash.match(/r=([\w-]+)/);
+      if (m) { setTab('list'); setView({ name: 'recipe', id: m[1] }); }
+    };
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
+    return () => window.removeEventListener('hashchange', fromHash);
+  }, []);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [view, tab]);
+
+  const setHash = id => {
+    try { history.replaceState(null, '', id ? `#r=${id}` : location.pathname + location.search); } catch {}
+  };
+
+  const openRecipe = id => { setHash(id); setView({ name: 'recipe', id }); };
+  const closeView = () => { setHash(null); setView(null); };
+  const goTab = t => { closeView(); setTab(t); };
+
+  const onProcessed = (draft, source) => setView({ name: 'form', draft, source });
+
+  const onSave = async (rec, file, oldUrl) => {
+    const saved = await saveRecipe(rec, file, oldUrl);
+    if (view?.source === 'voice') store.del('draft-lines');
+    setRecipes(list => {
+      const i = list.findIndex(x => x.id === saved.id);
+      return i >= 0 ? list.map(x => x.id === saved.id ? saved : x) : [saved, ...list];
+    });
+    if (view?.source) setTab('list');
+    openRecipe(saved.id);
+    toast('המתכון נשמר ✓');
+  };
+
+  const onDelete = async r => {
+    if (!confirm(`למחוק את "${r.title}"?`)) return;
+    const { error } = await sb.from('recipes').delete().eq('id', r.id);
+    if (error) { toast('המחיקה נכשלה: ' + error.message); return; }
+    if (r.image_url) { try { await removeImage(r.image_url); } catch {} }
+    setRecipes(list => list.filter(x => x.id !== r.id));
+    closeView();
+    toast('המתכון נמחק');
+  };
+
+  let overlay = null;
+  if (view?.name === 'recipe') {
+    const r = recipes.find(x => x.id === view.id);
+    overlay = html`<${RecipeView} recipe=${r} loading=${loading} toast=${toast}
+      onBack=${closeView}
+      onEdit=${() => setView({ name: 'form', draft: r })}
+      onDelete=${() => onDelete(r)} />`;
+  } else if (view?.name === 'form') {
+    overlay = html`<${RecipeForm} key=${view.draft.id || 'new'} initial=${view.draft} members=${members} toast=${toast}
+      heading=${view.draft.id ? 'עריכת מתכון' : 'בדוק ושמור'}
+      onSave=${onSave}
+      onCancel=${() => view.draft.id ? openRecipe(view.draft.id) : closeView()} />`;
+  }
+
+  return html`<${React.Fragment}>
+    <div hidden=${!!overlay}>
+      ${tab === 'list' && html`<${ListView} recipes=${recipes} loading=${loading} members=${members} onOpen=${openRecipe} />`}
+      ${tab === 'voice' && html`<${VoiceView} onProcessed=${onProcessed} setBusy=${setBusy} toast=${toast} />`}
+      ${tab === 'upload' && html`<${UploadView} onProcessed=${onProcessed} setBusy=${setBusy} toast=${toast} />`}
+      ${tab === 'family' && html`<${FamilyView} members=${members} reload=${loadMembers} toast=${toast} />`}
+    </div>
+    ${overlay}
+
+    <nav className="tabbar">
+      ${TABS.map(t => html`<button key=${t.id} className=${tab === t.id && !overlay ? 'on' : ''} onClick=${() => goTab(t.id)}>
+        <span className="ic">${t.ic}</span>${t.label}
+      </button>`)}
+    </nav>
+
+    ${busy && html`<div className="overlay"><div className="spin"></div><div>${busy}</div></div>`}
+    ${toastMsg && html`<div className="toast" onClick=${() => setToastMsg(null)}>${toastMsg}</div>`}
+  <//>`;
+}
+
+createRoot(document.getElementById('root')).render(html`<${App} />`);
+</script>
+</body>
+</html>
