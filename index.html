@@ -213,12 +213,23 @@ async function callServer(body) {
   return data;
 }
 
-async function aiEdit({ text, files }) {
-  try {
-    const data = await callServer({ text, files });
-    return normalize(data.recipe);
-  } catch (e) { throw new Error('העריכה נכשלה: ' + e.message); }
+async function aiEdit({ text, files, url }) {
+  let data;
+  try { data = await callServer({ text, files, url }); }
+  catch (e) { throw new Error('העריכה נכשלה: ' + e.message); }
+  const r = normalize(data.recipe);
+  if (/לא נמצא מתכון/.test(r.title) && !r.ingredients.length && !r.steps.length) {
+    throw new Error(url
+      ? 'לא מצאתי מתכון בעמוד הזה. אם זה פוסט באינסטגרם/טיקטוק/פייסבוק, צלם מסך של הכיתוב והעלה אותו כתמונה.'
+      : 'לא מצאתי מתכון בחומר שהועלה.');
+  }
+  return r;
 }
+
+const extractUrl = t => {
+  const m = (t || '').match(/https?:\/\/[^\s<>"']+/i);
+  return m ? m[0].replace(/[).,;!?\]]+$/, '') : null;
+};
 
 const pathFromUrl = u => {
   const p = u && u.split(`/${BUCKET}/`)[1];
@@ -484,7 +495,7 @@ function ListView({ recipes, loading, members, onOpen, kitchenName }) {
   </div>`;
 }
 
-function RecipeView({ recipe, loading, onBack, onEdit, onDelete, toast }) {
+function RecipeView({ recipe, loading, onBack, onEdit, onDelete, toast, cookMode, onToggleCook }) {
   const [done, setDone] = useState([]);
   const fileRef = useRef(null);
 
@@ -524,8 +535,13 @@ function RecipeView({ recipe, loading, onBack, onEdit, onDelete, toast }) {
   return html`<div className="wrap">
     <div className="top">
       <button className="back" onClick=${onBack}>→ כל המתכונים</button>
-      <button className="btn sm primary" onClick=${share}>שתף ↗</button>
+      <div style=${{ display: 'flex', gap: 8 }}>
+        <button className=${'btn sm' + (cookMode ? ' primary' : '')} onClick=${onToggleCook}
+          aria-pressed=${cookMode}>${cookMode ? '🔆 מסך דלוק' : '🔅 מצב בישול'}</button>
+        <button className="btn sm primary" onClick=${share}>שתף ↗</button>
+      </div>
     </div>
+    ${cookMode && html`<div className="hint" style=${{ margin: '2px 0 10px' }}>המסך יישאר דלוק עד שתכבה את מצב הבישול.</div>`}
     ${recipe.image_url && html`<img className="hero" src=${recipe.image_url} alt="" />`}
     <h1>${recipe.title}</h1>
     <div className="chips">
@@ -721,6 +737,7 @@ function VoiceView({ onProcessed, setBusy, toast, draftKey }) {
 function UploadView({ onProcessed, setBusy, toast }) {
   const [files, setFiles] = useState([]);
   const [note, setNote] = useState('');
+  const [link, setLink] = useState('');
   const input = useRef(null);
 
   const pick = e => {
@@ -729,8 +746,20 @@ function UploadView({ onProcessed, setBusy, toast }) {
     setFiles(prev => [...prev, ...fs.map(f => ({ file: f, preview: f.type.startsWith('image/') ? URL.createObjectURL(f) : null }))]);
   };
 
+  const paste = async () => {
+    try {
+      const t = await navigator.clipboard.readText();
+      const u = extractUrl(t);
+      if (u) setLink(u); else toast('לא נמצא קישור בהעתקה');
+    } catch { toast('לא הצלחתי להדביק. לחץ לחיצה ארוכה בשדה ובחר "הדבק".'); }
+  };
+
+  const url = extractUrl(link);
+  const badLink = link.trim() && !url;
+
   const go = async () => {
-    setBusy('קורא את המתכון…');
+    if (badLink) { toast('הקישור לא תקין. הוא צריך להתחיל ב-https://'); return; }
+    setBusy(url && !files.length ? 'קורא את העמוד…' : 'קורא את המתכון…');
     try {
       const payload = [];
       let extra = '';
@@ -748,21 +777,38 @@ function UploadView({ onProcessed, setBusy, toast }) {
         }
       }
       const text = (note + extra).trim() || undefined;
-      const r = await aiEdit({ text, files: payload });
-      if (text) r.raw_input = text;
+      const r = await aiEdit({ text, files: payload, url: url || undefined });
+      if (url) {
+        r.notes = [r.notes, `מקור: ${url}`].filter(Boolean).join('\n');
+        r.raw_input = [url, text].filter(Boolean).join('\n');
+      } else if (text) r.raw_input = text;
       onProcessed(r, 'upload');
     } catch (e) { toast(e.message); }
     finally { setBusy(null); }
   };
 
   return html`<div className="wrap">
-    <h1>מתכון מצילום או מסמך</h1>
-    <p className="hint">העלה צילום מסך, צילום של דף מתכון או קובץ PDF. אם המתכון מתפרש על כמה עמודים, אפשר להעלות כמה קבצים יחד.</p>
+    <h1>מתכון מקישור, צילום או מסמך</h1>
+
+    <div className="label" style=${{ marginTop: 0 }}>🔗 קישור למתכון</div>
+    <div className="row">
+      <input className="input grow ltr" type="url" inputMode="url" value=${link}
+        placeholder="https://..." onInput=${e => setLink(e.target.value)} />
+      ${link
+        ? html`<button className="btn" onClick=${() => setLink('')}>נקה</button>`
+        : html`<button className="btn" onClick=${paste}>הדבק</button>`}
+    </div>
+    ${badLink
+      ? html`<div className="err" style=${{ marginTop: 0 }}>זה לא נראה כמו קישור.</div>`
+      : html`<p className="hint" style=${{ marginTop: 0 }}>עובד הכי טוב עם אתרי מתכונים ובלוגים. באינסטגרם, טיקטוק ופייסבוק עדיף לצלם מסך של הכיתוב.</p>`}
+
+    <div className="or">או</div>
 
     <input ref=${input} type="file" accept="image/*,application/pdf,text/plain" multiple hidden onChange=${pick} />
     <div className="filebox" onClick=${() => input.current.click()}>
       <div className="big">📄</div>
-      <div>לחץ לבחירת תמונה או קובץ</div>
+      <div>צילום מסך, צילום של דף מתכון או PDF</div>
+      <div style=${{ fontSize: 13 }}>אפשר לבחור כמה עמודים יחד</div>
     </div>
 
     ${files.length > 0 && html`<div className="files">
@@ -776,7 +822,7 @@ function UploadView({ onProcessed, setBusy, toast }) {
     <textarea className="input" rows="2" value=${note} onInput=${e => setNote(e.target.value)} placeholder="למשל: הכפלתי את הכמויות, השתמשתי בחמאה במקום שמן"></textarea>
 
     <div className="sticky">
-      <button className="btn primary block" disabled=${!files.length && !note.trim()} onClick=${go}>✨ ערוך מתכון</button>
+      <button className="btn primary block" disabled=${!files.length && !note.trim() && !url} onClick=${go}>✨ ערוך מתכון</button>
     </div>
   </div>`;
 }
@@ -966,6 +1012,8 @@ function MainApp({ kitchen, kitchens, onSwitch, reloadKitchens, email, userId, i
   const [members, setMembers] = useState([]);
   const [busy, setBusy] = useState(null);
   const [toastMsg, setToastMsg] = useState(null);
+  const [cookMode, setCookMode] = useState(false);
+  useWakeLock(cookMode);
   const tRef = useRef(null);
   const draftKey = `draft-lines-${kitchen.id}`;
 
@@ -1012,6 +1060,13 @@ function MainApp({ kitchen, kitchens, onSwitch, reloadKitchens, email, userId, i
 
   const onProcessed = (draft, source) => setView({ name: 'form', draft, source });
 
+  const toggleCook = () => {
+    if (cookMode) { setCookMode(false); toast('מצב בישול כבוי'); return; }
+    if (!('wakeLock' in navigator)) { toast('המכשיר לא תומך בהשארת המסך דלוק. באייפון צריך iOS 18.4 ומעלה.'); return; }
+    setCookMode(true);
+    toast('מצב בישול: המסך יישאר דלוק 🔆');
+  };
+
   const onSave = async (rec, file, oldUrl) => {
     const saved = await saveRecipe(rec, file, oldUrl, kitchen.id);
     if (view?.source === 'voice') store.del(draftKey);
@@ -1038,6 +1093,7 @@ function MainApp({ kitchen, kitchens, onSwitch, reloadKitchens, email, userId, i
   if (view?.name === 'recipe') {
     const r = recipes.find(x => x.id === view.id);
     overlay = html`<${RecipeView} recipe=${r} loading=${loading} toast=${toast}
+      cookMode=${cookMode} onToggleCook=${toggleCook}
       onBack=${closeView}
       onEdit=${() => setView({ name: 'form', draft: r })}
       onDelete=${() => onDelete(r)} />`;
